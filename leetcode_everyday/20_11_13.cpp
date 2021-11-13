@@ -1,6 +1,28 @@
-
-//375. çŒœæ•°å­—å¤§å° II
+//375. ²ÂÊý×Ö´óÐ¡ II
 //dp
+//ÎªÁË½«Ö§¸¶µÄ½ð¶î×îÐ¡»¯£¬³ýÁËÐèÒª½«Ã¿´ÎÖ§¸¶µÄ½ð¶î¿ØÖÆÔÚ½ÏµÍÖµÒÔÍâ£¬»¹ÐèÒªÔÚ²ÂÊý×ÖµÄ¹ý³ÌÖÐËõÐ¡ËùÑ¡Êý×ÖµÄ·¶Î§¡£
+//µ±²ÂÁËÊý×Ö x²¢ÇÒ²Â´íÊ±£¬»áÖªµÀ xx ±ÈËùÑ¡Êý×Ö´ó»¹ÊÇÐ¡¡£Èç¹û x ±ÈËùÑ¡Êý×Ö´ó£¬ÔòÈÎºÎ±Èx ´óµÄÊý×ÖÒ»¶¨¶¼±ÈËùÑ¡Êý×Ö´ó£¬
+//Òò´ËÓ¦¸ÃÔÚ±È xÐ¡µÄÊý×ÖÖÐ¼ÌÐø²ÂÊý×Ö¡£Èç¹û x ±ÈËùÑ¡Êý×ÖÐ¡£¬Í¬Àí¿ÉÖªÓ¦¸ÃÔÚ±È xx ´óµÄÊý×ÖÖÐ¼ÌÐø²ÂÊý×Ö¡£
+//ÓÃf(i, j) ±íÊ¾ÔÚ·¶Î§[i, j] ÄÚÈ·±£Ê¤ÀûµÄ×îÉÙ½ð¶î£¬Ä¿±êÊÇ¼ÆËã f(1, n)¡£
+//Ó¦¿¼ÂÇ×î»µÇé¿ö£¬¼ÆËã f(1, n)f(1,n) Ê±Ó¦È¡ÉÏÊöÁ½ÕßµÄ×î´óÖµ f(1, n) = x + max(f(1, x?1), f(x + 1, n))
+//ÎªÁË½«È·±£Ê¤ÀûµÄ½ð¶î×îÐ¡»¯£¬ÐèÒª±éÀú´Ó 1 µ½ n µÄËùÓÐ¿ÉÄÜµÄ x£¬Ê¹µÃ f(1,n) µÄÖµ×îÐ¡
+class Solution {
+public:
+    int getMoneyAmount(int n) {
+        vector<vector<int>> f(n + 1, vector<int>(n + 1));
+        for (int i = n - 1; i >= 1; i--) {
+            for (int j = i + 1; j <= n; j++) {
+                f[i][j] = j + f[i][j - 1];
+                for (int k = i; k < j; k++) {
+                    f[i][j] = min(f[i][j], k + max(f[i][k - 1], f[k + 1][j]));
+                }
+            }
+        }
+        return f[1][n];
+    }
+};
+
+//Ð§ÂÊÓÅÓÚÉÏÃæ
 class Solution {
 public:
     int getMoneyAmount(int n) {
@@ -20,46 +42,48 @@ public:
     }
 };
 
-//æˆ–
-//dp[i][j]æ˜¯è¯´ä¾æ¬¡ä»¥ä»Žiåˆ°jçš„æ•°å­—ä½œä¸ºåˆ†å‰²ç‚¹(çŒœçš„æ•°)ï¼Œå¿…å®šèµ¢çš„æ¸¸æˆæ‰€ç”¨é’±çš„æœ€å°å€¼ã€‚
+//ÏÂÃæµÄ´úÂëÊÇ´Ó×óÍùÓÒ°´ÁÐ£¬´ÓÏÂÍùÉÏ£¬½øÐÐÊý¾ÝµÄÌî³ä£¬ÉÏÃæµÄ´úÂë£¬´ÓÏÂÍùÉÏ°´ÐÐ£¬´Ó×óÍùÓÒÌî³ä
+
+
+//dp[i][j]ÊÇËµÒÀ´ÎÒÔ´Óiµ½jµÄÊý×Ö×÷Îª·Ö¸îµã(²ÂµÄÊý)£¬±Ø¶¨Ó®µÄÓÎÏ·ËùÓÃÇ®µÄ×îÐ¡Öµ¡£
 //i i+1 i+2 ... ... j-2 j-1 j
-//ä»¥i + 1ä¸ºåˆ†å‰²ç‚¹å¯¹åº”çš„ï¼šdp1 = max(dp[i][i], dp[i + 2][j]) + i + 1
-//ä»¥j - 1ä¸ºåˆ†å‰²ç‚¹å¯¹åº”çš„: dp2 = max(dp[i][j - 2], dp[j][j]) + j - 1
-//ç‰¹åˆ«åœ°, ä»¥iä¸ºåˆ†å‰²ç‚¹ï¼šdp0 = i + dp[i + 1][j]; ä»¥jä¸ºåˆ†å‰²ç‚¹: dp3 = j + dp[i][j - 1]
+//ÒÔi + 1Îª·Ö¸îµã¶ÔÓ¦µÄ£ºdp1 = max(dp[i][i], dp[i + 2][j]) + i + 1
+//ÒÔj - 1Îª·Ö¸îµã¶ÔÓ¦µÄ: dp2 = max(dp[i][j - 2], dp[j][j]) + j - 1
+//ÌØ±ðµØ, ÒÔiÎª·Ö¸îµã£ºdp0 = i + dp[i + 1][j]; ÒÔjÎª·Ö¸îµã: dp3 = j + dp[i][j - 1]
 //dp[i][j] = min(dp0, dp1, dp2, dp3)
-//è¿™é“é¢˜ç”±äºŽéœ€è¦ç”¨æœ€å°‘çš„é‡‘å¸é€šè¿‡æ¸¸æˆï¼Œæ‰€æœ‰äºŒåˆ†æ³•æ— æ³•è§£é¢˜ï¼Œéœ€è¦ç©·ä¸¾æ‰€æœ‰æƒ…å†µ
-//1.i==j,æ—¶åªæœ‰ä¸€ä¸ªæ•°å­—ï¼ŒèŠ±é”€ä¸º0ï¼›
-//2.i!=j,å¯¹äºŽä»¥ç«¯ç‚¹åˆ†å‰²æ¥è¯´ï¼Œåªéœ€è¦è®¡ç®—å·¦ç«¯ç‚¹ï¼Œå³dp[i][j] = min(dp[i][j], i + dp[i + 1][j]); å› ä¸ºjå§‹ç»ˆå¤§äºŽi,ä¸”dp[i][j-1]>=dp[i+1][j]
-//3.å¯¹äºŽæ¯ä¸€ä¸ªåˆ†å‰²ç‚¹ï¼Œæˆ‘ä»¬å–å®ƒå·¦å³ä¸¤è¾¹åŒºé—´çš„æœ€å¤§å€¼åŠ ä¸Šåˆ†å‰²ç‚¹æœ¬èº«ä½œä¸ºå–æ­¤åˆ†å‰²ç‚¹çš„dp[i][j]å€¼
-//4.å¯¹äºŽæ¯ä¸€ä¸ªåŒºé—´ï¼Œæˆ‘ä»¬å–æ‰€æœ‰åˆ†å‰²ç‚¹çš„dp[i][j]çš„æœ€å°å€¼ä½œä¸ºdp[i][j]çš„çœŸæ­£çš„å€¼
+//ÕâµÀÌâÓÉÓÚÐèÒªÓÃ×îÉÙµÄ½ð±ÒÍ¨¹ýÓÎÏ·£¬ËùÓÐ¶þ·Ö·¨ÎÞ·¨½âÌâ£¬ÐèÒªÇî¾ÙËùÓÐÇé¿ö
+//1.i==j,Ê±Ö»ÓÐÒ»¸öÊý×Ö£¬»¨ÏúÎª0£»
+//2.i!=j,¶ÔÓÚÒÔ¶Ëµã·Ö¸îÀ´Ëµ£¬Ö»ÐèÒª¼ÆËã×ó¶Ëµã£¬¼´dp[i][j] = min(dp[i][j], i + dp[i + 1][j]); ÒòÎªjÊ¼ÖÕ´óÓÚi,ÇÒdp[i][j-1]>=dp[i+1][j]
+//3.¶ÔÓÚÃ¿Ò»¸ö·Ö¸îµã£¬ÎÒÃÇÈ¡Ëü×óÓÒÁ½±ßÇø¼äµÄ×î´óÖµ¼ÓÉÏ·Ö¸îµã±¾Éí×÷ÎªÈ¡´Ë·Ö¸îµãµÄdp[i][j]Öµ
+//4.¶ÔÓÚÃ¿Ò»¸öÇø¼ä£¬ÎÒÃÇÈ¡ËùÓÐ·Ö¸îµãµÄdp[i][j]µÄ×îÐ¡Öµ×÷Îªdp[i][j]µÄÕæÕýµÄÖµ
 
 class Solution {
 public:
     int getMoneyAmount(int n) {
         if (n == 1)
             return 0;
-        //å®šä¹‰çŸ©é˜µ
+        //¶¨Òå¾ØÕó
         vector<vector<int>> dp(n + 1, vector<int>(n + 1));
-        //åˆå§‹åŒ–â€œ\â€
+        //³õÊ¼»¯¡°\¡±
         for (int i = 0; i <= n; i++) {
             for (int j = 0; j <= n; j++) {
                 dp[i][j] = INT_MAX;
             }
         }
-        //å®šä¹‰åŸºç¡€å€¼dp[i][i]
+        //¶¨Òå»ù´¡Öµdp[i][i]
         for (int i = 0; i <= n; i++) {
             dp[i][i] = 0;
         }
 
-        //æŒ‰åˆ—æ¥ï¼Œä»Žç¬¬2åˆ—å¼€å§‹
+        //°´ÁÐÀ´£¬´ÓµÚ2ÁÐ¿ªÊ¼
         for (int j = 2; j <= n; j++) {
-            //æŒ‰è¡Œæ¥ï¼Œä»Žä¸‹å¾€ä¸Š
+            //°´ÐÐÀ´£¬´ÓÏÂÍùÉÏ
             for (int i = j - 1; i >= 1; i--) {
-                //ç®—é™¤äº†ä¸¤ç«¯çš„æ¯ä¸€ä¸ªåˆ†å‰²ç‚¹
+                //Ëã³ýÁËÁ½¶ËµÄÃ¿Ò»¸ö·Ö¸îµã
                 for (int k = i + 1; k <= j - 1; k++) {
                     dp[i][j] = min(k + max(dp[i][k - 1], dp[k + 1][j]), dp[i][j]);
                 }
-                //ç®—å·¦ç«¯ç‚¹
+                //Ëã×ó¶Ëµã
                 dp[i][j] = min(dp[i][j], i + dp[i + 1][j]);
             }
         }
